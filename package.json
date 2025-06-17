@@ -1,0 +1,30 @@
+{
+  "name": "darkheart-whatsapp-bot",
+  "version": "1.0.0",
+  "description": "DarkHeart WhatsApp Bot using Baileys",
+  "main": "index.js",  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "deploy": "git add . && git commit -m 'Deploy update' && git push",
+    "clean": "node -e \"require('./lib/utils').cleanTempFiles()\"",
+    "backup": "node -e \"require('./lib/database').createBackup()\""
+  },
+  "keywords": [
+    "whatsapp",
+    "bot",
+    "baileys",
+    "darkheart"
+  ],
+  "author": "DarkHeart Bot",
+  "license": "MIT",  "dependencies": {
+    "@whiskeysockets/baileys": "^6.6.0",
+    "qrcode-terminal": "^0.12.0",
+    "fs-extra": "^11.2.0",
+    "moment": "^2.29.4",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

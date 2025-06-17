@@ -1,0 +1,29 @@
+node_modules/
+auth_info_baileys/
+data/
+backups/
+*.log
+.env
+.DS_Store
+Thumbs.db
+*.tmp
+*.temp
+
+# Media files (optional - uncomment if you don't want to track media)
+# media/images/*
+# media/videos/*
+# media/audio/*
+# media/documents/*
+
+# Public files (optional)
+# public/images/*
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+Desktop.ini
+.DS_Store
