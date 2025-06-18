@@ -88,6 +88,23 @@ The bot includes special support for Pterodactyl Panel deployment:
 For full Pterodactyl deployment instructions, see:
 - 📄 [Pterodactyl Deployment Guide](public/docs/PTERODACTYL_DEPLOYMENT.md)
 
+### Simplified Pterodactyl Deployment 🦅
+
+For a simplified Pterodactyl Panel deployment:
+
+1. **Upload all files** to your Pterodactyl server
+2. **Set the startup command** to: `bash simple-entrypoint.sh`
+3. **Start the server**
+
+The simple-entrypoint.sh script will:
+- Install dependencies if missing
+- Apply a fix for the Baileys noise-handler issue
+- Create necessary directories
+- Start the bot
+
+For full instructions, see:
+- 📄 [Simple Pterodactyl Deployment Guide](SIMPLE_PTERODACTYL_GUIDE.md)
+
 ### Other Cloud Platforms ☁️
 
 You can also deploy the bot on:
@@ -110,6 +127,7 @@ whatsapp bot/
 ├── settings.js           # Bot settings and commands
 ├── commandHandler.js     # Command processing
 ├── entrypoint.sh         # Pterodactyl entry script
+├── simple-entrypoint.sh  # Simplified Pterodactyl entry script
 ├── Dockerfile            # Docker container definition
 ├── docker-compose.yml    # Docker compose setup
 ├── README.md             # This file

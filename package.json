@@ -8,13 +8,11 @@
     "deploy": "git add . && git commit -m 'Deploy update' && git push",
     "clean": "node -e \"require('./lib/utils').cleanTempFiles()\"",
     "backup": "node -e \"require('./lib/database').createBackup()\"",
-    "pterodactyl": "bash entrypoint.sh",
+    "pterodactyl": "bash simple-entrypoint.sh",
     "prestart": "node scripts/create-directories.js",
-    "patch": "node scripts/patch-baileys.js",
-    "check": "node scripts/check-dependencies.js",
-    "postinstall": "node scripts/patch-baileys.js || echo 'Patch skipped - continuing...'",
-    "setup": "npm ci --force && node scripts/create-directories.js && node scripts/patch-baileys.js && node scripts/check-dependencies.js",
-    "setup:pterodactyl": "npm ci --production --no-audit --force && node scripts/create-directories.js && node scripts/patch-baileys.js && node scripts/check-dependencies.js"
+    "simple-fix": "cp scripts/simple-noise-handler-fix.js node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js",
+    "simple-setup": "npm install --production && mkdir -p data media && npm run simple-fix",
+    "setup": "npm install && node scripts/create-directories.js"
   },
   "keywords": [
     "whatsapp",
