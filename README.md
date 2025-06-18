@@ -10,10 +10,11 @@ A powerful WhatsApp bot built with Baileys library for Node.js, ready for cloud 
 - 👥 **Group Management** - Auto welcome messages for new members
 - 🔒 **Multi-Device Support** - Works without keeping phone online
 - 📱 **Easy Setup** - Simple installation and configuration
-- ☁️ **Cloud Ready** - Deploy on Heroku, Railway, Render
+- ☁️ **Cloud Ready** - Deploy on Heroku, Railway, Render, Pterodactyl
 - 🧮 **Calculator** - Mathematical calculations
 - 😂 **Fun Commands** - Jokes, quotes, and entertainment
 - 📁 **Organized Structure** - Modular file organization
+- 🦅 **Pterodactyl Support** - Auto-installs dependencies on container start
 
 ## Installation 🚀
 
@@ -25,6 +26,15 @@ A powerful WhatsApp bot built with Baileys library for Node.js, ready for cloud 
 3. **Install dependencies**:
    ```bash
    npm install
+   ```
+   
+   Or use the provided script:
+   ```bash
+   # On Windows
+   install.bat
+   
+   # On Linux/Mac
+   bash entrypoint.sh
    ```
 
 4. **Configure the bot**:
@@ -64,14 +74,51 @@ const config = {
 };
 ```
 
+## Deployment Options 🌐
+
+### Pterodactyl Panel Deployment 🦅
+
+The bot includes special support for Pterodactyl Panel deployment:
+
+1. **Create a new server** on your Pterodactyl Panel using NodeJS egg
+2. **Upload files** to the server using File Manager
+3. **Start the server** - dependencies will install automatically
+4. **Scan QR code** from the console or use pairing code
+
+For full Pterodactyl deployment instructions, see:
+- 📄 [Pterodactyl Deployment Guide](public/docs/PTERODACTYL_DEPLOYMENT.md)
+
+### Other Cloud Platforms ☁️
+
+You can also deploy the bot on:
+
+- **Heroku**: Use the `Procfile` included in the repo
+- **Railway**: Auto-deploy from GitHub
+- **Render**: Use the included `deploy.sh` script
+- **VPS**: Run directly with Node.js
+
+For detailed cloud deployment instructions:
+- 📄 [Deployment Guide](public/docs/DEPLOYMENT_GUIDE.md)
+
 ## File Structure 📁
 
 ```
 whatsapp bot/
-├── index.js          # Main bot file
-├── package.json      # Dependencies and scripts
-├── README.md         # This file
-└── auth_info_baileys/ # Authentication data (auto-created)
+├── index.js              # Main bot file
+├── package.json          # Dependencies and scripts
+├── config.js             # Configuration settings
+├── settings.js           # Bot settings and commands
+├── commandHandler.js     # Command processing
+├── entrypoint.sh         # Pterodactyl entry script
+├── Dockerfile            # Docker container definition
+├── docker-compose.yml    # Docker compose setup
+├── README.md             # This file
+├── lib/                  # Library modules
+├── data/                 # Data storage (auto-created)
+├── media/                # Media files (auto-created)
+├── public/               # Public files and documentation
+│   └── docs/             # Documentation files
+└── scripts/              # Utility scripts
 ```
 
 ## Scripts 📝

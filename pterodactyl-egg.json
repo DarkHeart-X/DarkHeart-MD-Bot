@@ -1,0 +1,73 @@
+{
+    "meta": {
+        "version": "PTDL_v2",
+        "update_url": null
+    },
+    "exported_at": "2023-01-01T00:00:00+00:00",
+    "name": "DarkHeart WhatsApp Bot",
+    "author": "DarkHeart Bot",
+    "description": "A powerful WhatsApp bot built with Baileys library for Node.js with automatic dependency installation.",
+    "features": {
+        "eula": false,
+        "artifacts": false,
+        "config_files": false,
+        "startup_files": true,
+        "log_parsing": false
+    },
+    "images": [
+        "ghcr.io/pterodactyl/yolks:nodejs_18"
+    ],
+    "file_denylist": [],
+    "startup": "bash entrypoint.sh",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"Bot started successfully\"\r\n}",
+        "logs": "{}",
+        "stop": "^C"
+    },
+    "scripts": {
+        "installation": {
+            "script": "npm install --no-audit --no-fund\r\nnode scripts/create-directories.js",
+            "container": "node:18-alpine",
+            "entrypoint": "ash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Bot Name",
+            "description": "The name of your WhatsApp bot.",
+            "env_variable": "BOT_NAME",
+            "default_value": "DarkHeart",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:20"
+        },
+        {
+            "name": "Owner Number",
+            "description": "Your WhatsApp number with country code (e.g. 923001234567)",
+            "env_variable": "OWNER_NUMBER",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string"
+        },
+        {
+            "name": "Command Prefix",
+            "description": "The prefix for bot commands.",
+            "env_variable": "PREFIX",
+            "default_value": "!",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:3"
+        },
+        {
+            "name": "Use Pairing Code",
+            "description": "Whether to use pairing code instead of QR code for authentication.",
+            "env_variable": "USE_PAIRING_CODE",
+            "default_value": "false",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean"
+        }
+    ]
+}

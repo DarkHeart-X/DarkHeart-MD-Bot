@@ -31,12 +31,16 @@ The DarkHeart WhatsApp Bot is **fully ready for deployment** after comprehensive
 - ✅ `install.bat` - Windows installer
 - ✅ `start.bat` - Windows startup script
 - ✅ `deploy.sh` - Unix deployment script
+- ✅ `entrypoint.sh` - Pterodactyl auto-install script
+- ✅ `Dockerfile` - Docker container definition
+- ✅ `docker-compose.yml` - Docker compose configuration
 
 ### ✅ **Documentation (Complete)**
 - ✅ `README.md` - Main documentation
 - ✅ `public/docs/DEPLOYMENT_GUIDE.md` - Deployment instructions
 - ✅ `public/docs/24-HOUR-CLEANUP.md` - Privacy documentation
 - ✅ `public/docs/user-guide.md` - User manual
+- ✅ `public/docs/PTERODACTYL_DEPLOYMENT.md` - Pterodactyl deployment guide
 
 ---
 
@@ -103,6 +107,14 @@ The DarkHeart WhatsApp Bot is **fully ready for deployment** after comprehensive
 # Installation scripts:
 - install.bat (Windows) ✅
 - deploy.sh (Unix/Linux) ✅
+```
+
+### 5. **Pterodactyl** ✅
+```bash
+# Auto-installation support:
+- entrypoint.sh ✅
+- Dockerfile ✅
+- docker-compose.yml ✅
 ```
 
 ---

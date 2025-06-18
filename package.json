@@ -7,7 +7,10 @@
     "dev": "nodemon index.js",
     "deploy": "git add . && git commit -m 'Deploy update' && git push",
     "clean": "node -e \"require('./lib/utils').cleanTempFiles()\"",
-    "backup": "node -e \"require('./lib/database').createBackup()\""
+    "backup": "node -e \"require('./lib/database').createBackup()\"",
+    "pterodactyl": "bash entrypoint.sh",
+    "prestart": "node scripts/create-directories.js",
+    "setup": "npm install && node scripts/create-directories.js"
   },
   "keywords": [
     "whatsapp",

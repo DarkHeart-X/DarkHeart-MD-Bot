@@ -9,9 +9,13 @@ const config = {
     PORT: process.env.PORT || 3000,
     
     // Bot Configuration
-    BOT_PREFIX: process.env.BOT_PREFIX || '!',
+    BOT_PREFIX: process.env.BOT_PREFIX || process.env.PREFIX || '!',
     OWNER_NUMBER: process.env.OWNER_NUMBER || '923xxxxxxxxx@s.whatsapp.net',
+    BOT_NAME: process.env.BOT_NAME || 'DarkHeart',
     TIMEZONE: process.env.TIMEZONE || 'Asia/Karachi',
+    
+    // Authentication Configuration
+    USE_PAIRING_CODE: process.env.USE_PAIRING_CODE === 'true' || false,
     
     // API Keys
     WEATHER_API_KEY: process.env.WEATHER_API_KEY || '',

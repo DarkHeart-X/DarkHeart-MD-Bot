@@ -1,0 +1,19 @@
+# DarkHeart WhatsApp Bot - Docker Compose
+version: '3'
+
+services:
+  darkheart-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: darkheart-whatsapp-bot
+    restart: unless-stopped
+    volumes:
+      - ./data:/home/container/data
+      - ./media:/home/container/media
+    environment:
+      - NODE_ENV=production
+      # Add your environment variables here
+    # Uncomment if you need to expose a web interface
+    # ports:
+    #   - "8080:8080"
