@@ -4,8 +4,8 @@
         "update_url": null
     },
     "exported_at": "2023-06-18T00:00:00+00:00",
-    "name": "DarkHeart WhatsApp Bot",
-    "author": "DarkHeart Bot",
+    "name": "WhatsApp Bot",
+    "author": "",
     "description": "A simple and powerful WhatsApp bot built with Baileys library",
     "features": {
         "eula": false,
@@ -18,7 +18,7 @@
         "ghcr.io/pterodactyl/yolks:nodejs_18"
     ],
     "file_denylist": [],
-    "startup": "bash simple-entrypoint.sh",
+    "startup": "npm start",
     "config": {
         "files": "{}",
         "startup": "{\r\n    \"done\": \"Bot started successfully\"\r\n}",

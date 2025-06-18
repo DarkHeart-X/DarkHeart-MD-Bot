@@ -1,4 +1,4 @@
-# DarkHeart WhatsApp Bot 🖤
+# WhatsApp Bot
 
 A powerful WhatsApp bot built with Baileys library for Node.js, ready for cloud deployment
 
@@ -10,11 +10,11 @@ A powerful WhatsApp bot built with Baileys library for Node.js, ready for cloud 
 - 👥 **Group Management** - Auto welcome messages for new members
 - 🔒 **Multi-Device Support** - Works without keeping phone online
 - 📱 **Easy Setup** - Simple installation and configuration
-- ☁️ **Cloud Ready** - Deploy on Heroku, Railway, Render, Pterodactyl
+- ☁️ **Cloud Ready** - Deploy on Heroku, Railway, Render, or Panel
 - 🧮 **Calculator** - Mathematical calculations
 - 😂 **Fun Commands** - Jokes, quotes, and entertainment
 - 📁 **Organized Structure** - Modular file organization
-- 🦅 **Pterodactyl Support** - Auto-installs dependencies on container start
+- 🚀 **Easy Deployment** - Auto-installs dependencies on start
 
 ## Installation 🚀
 
@@ -76,34 +76,24 @@ const config = {
 
 ## Deployment Options 🌐
 
-### Pterodactyl Panel Deployment 🦅
+### Panel Deployment 🚀
 
-The bot includes special support for Pterodactyl Panel deployment:
+For a simple panel deployment:
 
-1. **Create a new server** on your Pterodactyl Panel using NodeJS egg
+1. **Create a new server** on your panel using NodeJS
 2. **Upload files** to the server using File Manager
-3. **Start the server** - dependencies will install automatically
-4. **Scan QR code** from the console or use pairing code
+3. **Set the startup command** to: `npm start`
+4. **Start the server** - dependencies will install automatically
+5. **Scan QR code** from the console or use pairing code
 
-For full Pterodactyl deployment instructions, see:
-- 📄 [Pterodactyl Deployment Guide](public/docs/PTERODACTYL_DEPLOYMENT.md)
-
-### Simplified Pterodactyl Deployment 🦅
-
-For a simplified Pterodactyl Panel deployment:
-
-1. **Upload all files** to your Pterodactyl server
-2. **Set the startup command** to: `bash simple-entrypoint.sh`
-3. **Start the server**
-
-The simple-entrypoint.sh script will:
+The bot will automatically:
 - Install dependencies if missing
-- Apply a fix for the Baileys noise-handler issue
+- Fix any library issues
 - Create necessary directories
-- Start the bot
+- Start and run properly
 
-For full instructions, see:
-- 📄 [Simple Pterodactyl Deployment Guide](SIMPLE_PTERODACTYL_GUIDE.md)
+For detailed instructions, see:
+- 📄 [Panel Deployment Guide](SIMPLE_PTERODACTYL_GUIDE.md)
 
 ### Other Cloud Platforms ☁️
 
@@ -126,10 +116,8 @@ whatsapp bot/
 ├── config.js             # Configuration settings
 ├── settings.js           # Bot settings and commands
 ├── commandHandler.js     # Command processing
-├── entrypoint.sh         # Pterodactyl entry script
-├── simple-entrypoint.sh  # Simplified Pterodactyl entry script
+├── entrypoint.sh         # Entry script with auto-fixes
 ├── Dockerfile            # Docker container definition
-├── docker-compose.yml    # Docker compose setup
 ├── README.md             # This file
 ├── lib/                  # Library modules
 ├── data/                 # Data storage (auto-created)

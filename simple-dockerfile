@@ -1,10 +1,5 @@
-# Simple Dockerfile for DarkHeart WhatsApp Bot
+# Simple Dockerfile for WhatsApp Bot
 FROM node:18
-
-# Install required dependencies
-RUN apt-get update && apt-get install -y \
-    git \
-    && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
@@ -21,11 +16,8 @@ COPY . .
 # Create necessary directories
 RUN mkdir -p data/sessions media/images media/audio
 
-# Fix Baileys noise-handler
-RUN cp scripts/simple-noise-handler-fix.js node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js
-
 # Make entrypoint executable
-RUN chmod +x simple-entrypoint.sh
+RUN chmod +x entrypoint.sh
 
 # Start the bot
-CMD ["bash", "simple-entrypoint.sh"]
+CMD ["npm", "start"]

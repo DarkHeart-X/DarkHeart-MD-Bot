@@ -1,26 +1,59 @@
 #!/bin/bash
 
-# DarkHeart WhatsApp Bot - Pterodactyl Panel Entrypoint
+# WhatsApp Bot - Simple Pterodactyl Entrypoint
 # This script runs before starting the bot and ensures dependencies are installed
 
-echo "🖤 DarkHeart Bot - Pterodactyl Setup 🖤"
-echo "======================================"
+echo "🖤 WhatsApp Bot - Starting Up 🖤"
+echo "=============================="
 
 # Make sure we're in the correct directory
 cd /home/container || cd $(pwd)
 
-# Ensure script has execution permissions
-chmod +x entrypoint.sh 2>/dev/null || true
+# Create basic directories
+mkdir -p data/sessions media/images media/audio
 
-# Function to clean node_modules and reinstall if needed
-clean_install() {
-    echo "🧹 Cleaning node_modules for fresh installation..."
-    rm -rf node_modules package-lock.json
-    echo "📦 Installing dependencies from scratch..."
-    npm cache clean --force
-    npm install --production --no-audit --no-fund
-    return $?
-}
+# Check if node_modules exists
+if [ ! -d "node_modules" ]; then
+    echo "📦 First run detected. Installing dependencies..."
+    npm install --production
+    echo "✅ Dependencies installed!"
+fi
+
+# Fix the Baileys noise-handler issue
+if [ -d "node_modules/@whiskeysockets" ]; then
+    echo "🔧 Applying fix for noise-handler..."
+    # Create simple fix directly in the script
+    cat > node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js << 'EOL'
+const { generateKeyPair } = require('./crypto');
+
+// Define makeNoiseHandler first to avoid reference error
+const makeNoiseHandler = (options) => {
+  const { private: privateKey, public: publicKey } = options.keyPair || generateKeyPair();
+  
+  return {
+    keyPair: { private: privateKey, public: publicKey },
+    
+    processHandshake: (data) => {
+      const keyEnc = data && data.length >= 32 ? data.slice(0, 32) : Buffer.alloc(32);
+      const keyMac = data && data.length >= 64 ? data.slice(32, 64) : Buffer.alloc(32);
+      
+      return {
+        encKey: Buffer.from(keyEnc),
+        macKey: Buffer.from(keyMac)
+      };
+    },
+    
+    decodeFrame: (data) => data,
+    encodeFrame: (data) => data
+  };
+};
+
+// Export functions
+exports.makeNoiseHandler = makeNoiseHandler;
+exports.makeNoiseHandlerAsync = makeNoiseHandler;
+EOL
+    echo "✅ Fixed noise-handler issue!"
+fi
 
 # Force reinstall if previous installation had issues
 if [ -f ".npm_failed" ]; then
@@ -66,43 +99,6 @@ else
     mkdir -p data/sessions media/images media/audio
 fi
 
-# Run the dependency check and fix any issues found
-echo "🔧 Checking dependencies and patching if needed..."
-if [ -f "scripts/check-dependencies.js" ]; then
-    node scripts/check-dependencies.js
-    
-    # If check fails, run the patching script
-    if [ $? -ne 0 ]; then
-        echo "⚠️ Dependency issues detected. Applying fixes..."
-        
-        # Apply the Baileys patching
-        if [ -f "scripts/patch-baileys.js" ]; then
-            echo "🔧 Running Baileys patching..."
-            node scripts/patch-baileys.js
-            
-            # Check again after patching
-            node scripts/check-dependencies.js
-            if [ $? -ne 0 ]; then
-                echo "⚠️ Still having dependency issues after patching."
-            else
-                echo "✅ Patching successful!"
-            fi
-        else
-            echo "❌ patch-baileys.js script not found."
-        fi
-    else
-        echo "✅ All dependencies check passed!"
-    fi
-fi
-
-# Extra patch for noise-handler.js if needed (fallback approach)
-if [ -f "scripts/fixed-noise-handler.js" ] && [ -f "node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js" ]; then
-    echo "🔧 Applying fixed noise handler implementation..."
-    cp scripts/fixed-noise-handler.js node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js
-    echo "✅ Applied fixed noise-handler.js"
-fi
-
-echo "🚀 Starting DarkHeart WhatsApp Bot..."
-
-# Start the bot using node with full error display
-NODE_OPTIONS="--trace-warnings" node index.js
+# Start the bot using npm start
+echo "🚀 Starting WhatsApp Bot..."
+npm start

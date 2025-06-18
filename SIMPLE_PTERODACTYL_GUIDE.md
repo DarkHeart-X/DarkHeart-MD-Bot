@@ -1,6 +1,6 @@
-# 🖤 DarkHeart WhatsApp Bot - Simple Pterodactyl Deployment Guide
+# 🖤 WhatsApp Bot - Simple Pterodactyl Deployment Guide
 
-This guide provides straightforward instructions for deploying the DarkHeart WhatsApp Bot on a Pterodactyl panel.
+This guide provides straightforward instructions for deploying a WhatsApp Bot on a Pterodactyl panel.
 
 ## Quick Setup Instructions
 
@@ -16,13 +16,12 @@ This guide provides straightforward instructions for deploying the DarkHeart Wha
 2. Make sure to include all files, especially:
    - `index.js`
    - `package.json`
-   - `simple-entrypoint.sh`
-   - `scripts/simple-noise-handler-fix.js`
+   - `entrypoint.sh`
 
 ### 3. Configure the Startup Command
 
 1. In the Pterodactyl panel, go to the server's "Startup" tab
-2. Change the startup command to: `bash simple-entrypoint.sh`
+2. Change the startup command to: `npm start`
 3. Save the changes
 
 ### 4. Start the Server

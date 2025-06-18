@@ -1,18 +1,14 @@
-{
-  "name": "darkheart-whatsapp-bot",
+{  "name": "whatsapp-bot",
   "version": "1.0.0",
-  "description": "DarkHeart WhatsApp Bot using Baileys",
+  "description": "WhatsApp Bot using Baileys",
   "main": "index.js",  "scripts": {
+    "prestart": "bash entrypoint.sh || true",
     "start": "node index.js",
     "dev": "nodemon index.js",
     "deploy": "git add . && git commit -m 'Deploy update' && git push",
     "clean": "node -e \"require('./lib/utils').cleanTempFiles()\"",
     "backup": "node -e \"require('./lib/database').createBackup()\"",
-    "pterodactyl": "bash simple-entrypoint.sh",
-    "prestart": "node scripts/create-directories.js",
-    "simple-fix": "cp scripts/simple-noise-handler-fix.js node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js",
-    "simple-setup": "npm install --production && mkdir -p data media && npm run simple-fix",
-    "setup": "npm install && node scripts/create-directories.js"
+    "setup": "npm install --production && mkdir -p data media"
   },
   "keywords": [
     "whatsapp",
