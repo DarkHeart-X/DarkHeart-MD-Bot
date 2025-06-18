@@ -59,11 +59,29 @@ cp scripts/simple-noise-handler-fix.js node_modules/@whiskeysockets/baileys/lib/
 node index.js
 ```
 
-### If you still see the noise-handler error
+### If you see Baileys errors (noise-handler or WebSocket errors)
+
+For a complete fix of all common Baileys issues:
+
+```bash
+# Run the comprehensive fix script
+bash scripts/fix-baileys.sh
+```
+
+If you specifically see noise-handler errors:
 
 ```bash
 # Copy the fixed version directly
 cp scripts/simple-noise-handler-fix.js node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js
+```
+
+If you specifically see WebSocket errors (`Cannot read properties of undefined`):
+
+```bash
+# Apply the WebSocket fixes
+sed -i 's/{ statusCode: err.code, reason: err.reason }/{ statusCode: err?.code || 0, reason: err?.reason || "Unknown" }/g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js
+sed -i 's/connection.info.statusCode/connection?.info?.statusCode || 500/g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js
+sed -i 's/connection.info.reason/connection?.info?.reason || "Connection ended"/g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js
 ```
 
 If that doesn't work, you can edit the file directly:

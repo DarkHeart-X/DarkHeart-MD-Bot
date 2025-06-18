@@ -89,21 +89,31 @@ If you see errors about missing modules:
    ```
 2. Restart the server
 
-### Baileys Noise-Handler Error
+### Baileys Errors
 
-If you see errors related to `noise-handler.js` or see `Cannot read properties of undefined (reading 'child')` errors:
+If you encounter any Baileys-related errors (`noise-handler.js` or WebSocket errors like `Cannot read properties of undefined`):
 
-1. In the Pterodactyl console, run:
+1. Run the comprehensive fix script:
+   ```bash
+   bash scripts/fix-baileys.sh
+   ```
+
+2. If that doesn't work, you can fix specific issues:
+
+   For noise-handler errors:
    ```bash
    cp scripts/simple-noise-handler-fix.js node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js
    ```
 
-2. Or use the patch script if available:
+   For WebSocket errors:
    ```bash
-   bash scripts/patch-baileys.js
+   # Fix "Cannot read properties of undefined" errors in socket.js
+   sed -i 's/{ statusCode: err.code, reason: err.reason }/{ statusCode: err?.code || 0, reason: err?.reason || "Unknown" }/g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js
+   sed -i 's/connection.info.statusCode/connection?.info?.statusCode || 500/g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js
+   sed -i 's/connection.info.reason/connection?.info?.reason || "Connection ended"/g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js
    ```
    
-3. Or apply the fix manually:
+3. Or apply the fixes manually:
    ```bash
    cp scripts/simple-noise-handler-fix.js node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js
    ```

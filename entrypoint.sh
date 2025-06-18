@@ -44,15 +44,32 @@ if [ ! -d "node_modules" ]; then
     echo "✅ Dependencies installed!"
 fi
 
-# Fix the Baileys noise-handler issue
+# Fix Baileys issues (noise-handler and socket.js)
 if [ -d "node_modules/@whiskeysockets" ]; then
-    echo "🔧 Applying fix for noise-handler..."
+    echo "🔧 Applying comprehensive Baileys fixes..."
     
-    # Check if the simple-noise-handler-fix.js exists and use it
-    if [ -f "scripts/simple-noise-handler-fix.js" ]; then
+    # Use the comprehensive fix script if available
+    if [ -f "scripts/fix-baileys.sh" ]; then
+        echo "🔄 Running comprehensive fix-baileys.sh script..."
+        bash scripts/fix-baileys.sh
+    
+    # Fall back to the simple fix if the script doesn't exist
+    elif [ -f "scripts/simple-noise-handler-fix.js" ]; then
+        echo "🔧 Applying simple noise-handler fix..."
         cp scripts/simple-noise-handler-fix.js node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js
+        
+        # Also try to fix socket.js WebSocket errors
+        if [ -f "node_modules/@whiskeysockets/baileys/lib/Socket/socket.js" ]; then
+            echo "🔧 Attempting to patch socket.js for WebSocket errors..."
+            sed -i'.bak' 's/\({ statusCode: err.code, reason: err.reason }\)/\({ statusCode: err?.code || 0, reason: err?.reason || "Unknown" }\)/g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js 2>/dev/null || true
+            sed -i'.bak' 's/connection.info.statusCode/connection?.info?.statusCode || 500/g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js 2>/dev/null || true
+            sed -i'.bak' 's/connection.info.reason/connection?.info?.reason || "Connection ended"/g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js 2>/dev/null || true
+        fi
+    
+    # Create fixes inline if no scripts are available
     else
-        # Create a more robust noise-handler fix if the file doesn't exist
+        # Fix noise-handler.js
+        echo "🔧 Creating inline noise-handler.js fix..."
         cat > node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js << 'EOL'
 /**
  * Fixed noise-handler.js to avoid initialization errors
@@ -124,9 +141,20 @@ const makeNoiseHandler = (options = {}) => {
 exports.makeNoiseHandler = makeNoiseHandler;
 exports.makeNoiseHandlerAsync = makeNoiseHandler;
 EOL
+
+        # Also try to patch socket.js for WebSocket errors
+        if [ -f "node_modules/@whiskeysockets/baileys/lib/Socket/socket.js" ]; then
+            echo "🔧 Patching socket.js to handle WebSocket errors..."
+            cp node_modules/@whiskeysockets/baileys/lib/Socket/socket.js node_modules/@whiskeysockets/baileys/lib/Socket/socket.js.bak
+            
+            # Apply safe optional chaining to prevent "Cannot read properties of undefined" errors
+            sed -i'.bak' 's/\({ statusCode: err.code, reason: err.reason }\)/\({ statusCode: err?.code || 0, reason: err?.reason || "Unknown" }\)/g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js 2>/dev/null || true
+            sed -i'.bak' 's/connection.info.statusCode/connection?.info?.statusCode || 500/g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js 2>/dev/null || true
+            sed -i'.bak' 's/connection.info.reason/connection?.info?.reason || "Connection ended"/g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js 2>/dev/null || true
+        fi
     fi
     
-    echo "✅ Fixed noise-handler issue!"
+    echo "✅ Fixed Baileys issues!"
 fi
 
 # Force reinstall if previous installation had issues
