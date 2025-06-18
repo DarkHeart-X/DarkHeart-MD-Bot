@@ -24,10 +24,9 @@
         "startup": "{\r\n    \"done\": \"Bot started successfully\"\r\n}",
         "logs": "{}",
         "stop": "^C"
-    },
-    "scripts": {
+    },    "scripts": {
         "installation": {
-            "script": "npm install --no-audit --no-fund\r\nnode scripts/create-directories.js",
+            "script": "apk add --no-cache bash git curl\r\nnpm install --no-audit --no-fund --production --force\r\nnode scripts/create-directories.js || mkdir -p data media\r\nnode scripts/patch-baileys.js || echo \"Patch script not found, continuing...\"\r\nchmod +x entrypoint.sh",
             "container": "node:18-alpine",
             "entrypoint": "ash"
         }

@@ -56,12 +56,53 @@ fi
 # Stop the running process
 kill $PID 2>/dev/null
 
+# Test Baileys patching specifically
 echo 
-echo "🔍 Test Results:"
+echo "🧪 Testing Baileys patch for noise-handler issue..."
+echo "-------------------------------------------------"
+
+# Check if the patch scripts exist
+if [ -f "scripts/check-dependencies.js" ] && [ -f "scripts/patch-baileys.js" ]; then
+    echo "✅ Patch scripts found"
+    
+    # Test if noise-handler.js exists and has content
+    if [ -f "node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js" ]; then
+        echo "✅ noise-handler.js exists"
+        
+        # Check file size
+        SIZE=$(stat -c%s "node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js" 2>/dev/null || echo "0")
+        if [ "$SIZE" -gt "100" ]; then
+            echo "✅ noise-handler.js has content (size: $SIZE bytes)"
+        else
+            echo "❌ noise-handler.js is too small (size: $SIZE bytes)"
+        fi
+        
+        # Run the dependency check
+        echo "� Running dependency check..."
+        node scripts/check-dependencies.js
+        if [ $? -eq 0 ]; then
+            echo "✅ Dependency check passed"
+            BAILEYS_CHECK="Passed"
+        else
+            echo "❌ Dependency check failed"
+            BAILEYS_CHECK="Failed"
+        fi
+    else
+        echo "❌ noise-handler.js not found"
+        BAILEYS_CHECK="Failed"
+    fi
+else
+    echo "❌ Patch scripts not found"
+    BAILEYS_CHECK="Failed"
+fi
+
+echo 
+echo "�🔍 Test Results:"
 echo "----------------"
 echo "✅ Script execution: Successful"
-[ -d "node_modules" ] && echo "✅ Dependency installation: Successful" || echo "❌ Dependency installation: Failed"
+[ -d "node_modules" ] && echo "✅ Dependency installation: Successful" || echo "❌ Dependency installation: Failed" 
 [ -d "data" ] && echo "✅ Directory creation: Successful" || echo "❌ Directory creation: Failed"
+[ "$BAILEYS_CHECK" = "Passed" ] && echo "✅ Baileys noise-handler patch: Successful" || echo "❌ Baileys noise-handler patch: Failed"
 
 echo
 echo "🦅 Your bot is ready for Pterodactyl deployment!"

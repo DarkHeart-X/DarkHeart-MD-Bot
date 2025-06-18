@@ -84,6 +84,42 @@ Check logs for errors. Common issues:
 - **Permission issues**: Make sure `entrypoint.sh` is executable
 - **Missing directories**: Verify the `create-directories.js` script ran successfully
 
+### "undefined at makeNoiseHandler" Error
+
+This is a known issue with the Baileys library in some environments. The bot includes an automatic fix:
+
+1. If you see this error, the bot will automatically try to fix it on the next restart
+2. You can manually fix it by running these commands in the Pterodactyl console:
+
+```bash
+# Apply the Baileys patch
+node scripts/patch-baileys.js
+
+# Verify the fix worked
+node scripts/check-dependencies.js
+
+# Restart the server
+```
+
+If that doesn't work, try a clean reinstall:
+
+```bash
+# Remove node_modules
+rm -rf node_modules
+
+# Clean npm cache
+npm cache clean --force
+
+# Reinstall with forced clean install
+npm ci --force
+
+# Apply patches
+node scripts/patch-baileys.js
+
+# Start the server
+bash entrypoint.sh
+```
+
 ### WhatsApp connection issues
 
 - Check if the QR code is being generated correctly

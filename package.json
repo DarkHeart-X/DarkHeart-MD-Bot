@@ -10,7 +10,11 @@
     "backup": "node -e \"require('./lib/database').createBackup()\"",
     "pterodactyl": "bash entrypoint.sh",
     "prestart": "node scripts/create-directories.js",
-    "setup": "npm install && node scripts/create-directories.js"
+    "patch": "node scripts/patch-baileys.js",
+    "check": "node scripts/check-dependencies.js",
+    "postinstall": "node scripts/patch-baileys.js || echo 'Patch skipped - continuing...'",
+    "setup": "npm ci --force && node scripts/create-directories.js && node scripts/patch-baileys.js && node scripts/check-dependencies.js",
+    "setup:pterodactyl": "npm ci --production --no-audit --force && node scripts/create-directories.js && node scripts/patch-baileys.js && node scripts/check-dependencies.js"
   },
   "keywords": [
     "whatsapp",
