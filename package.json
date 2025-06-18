@@ -2,7 +2,7 @@
   "version": "1.0.0",
   "description": "WhatsApp Bot using Baileys",
   "main": "index.js",  "scripts": {
-    "prestart": "bash entrypoint.sh || true",
+    "prestart": "bash entrypoint.sh from_prestart || true",
     "start": "node index.js",
     "dev": "nodemon index.js",
     "deploy": "git add . && git commit -m 'Deploy update' && git push",

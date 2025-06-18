@@ -1,6 +1,6 @@
 # 🖤 WhatsApp Bot - Simple Pterodactyl Deployment Guide
 
-This guide provides straightforward instructions for deploying a WhatsApp Bot on a Pterodactyl panel.
+This guide provides straightforward instructions for deploying a WhatsApp Bot on a Pterodactyl panel without any startup loops.
 
 ## Quick Setup Instructions
 
@@ -21,8 +21,11 @@ This guide provides straightforward instructions for deploying a WhatsApp Bot on
 ### 3. Configure the Startup Command
 
 1. In the Pterodactyl panel, go to the server's "Startup" tab
-2. Change the startup command to: `npm start`
-3. Save the changes
+2. Ensure the startup command is set to: `npm start`
+3. Add these environment variables (optional but recommended):
+   - `USE_PAIRING_CODE`: `true`
+   - `OWNER_NUMBER`: Your WhatsApp number (e.g., `923001234567`)
+4. Save the changes
 
 ### 4. Start the Server
 
@@ -94,5 +97,30 @@ To update your bot:
 1. Stop the server
 2. Upload the updated files
 3. Start the server again
+
+## Advanced Configuration
+
+### Working with Custom Eggs
+
+If you're using the provided custom egg (pterodactyl-egg.json or simple-egg.json):
+
+1. Import the egg into your Pterodactyl panel
+2. When creating the server, select the imported egg
+3. Configure the environment variables when prompted
+
+### Potential Startup Issues
+
+If you're experiencing issues with startup:
+
+1. Check if your server is using the correct startup command
+   - In your server's "Startup" tab, it should be set to `npm start`
+   - If it's set to `bash entrypoint.sh`, change it to `npm start` for better reliability
+
+2. Verify file permissions
+   - Make sure `entrypoint.sh` is executable
+   - Run this in the console if needed: `chmod +x entrypoint.sh`
+
+3. If you encounter permission errors:
+   - Try running: `chmod -R 755 .`
 
 The automatic dependency installation will only run if the `node_modules` folder is missing, so updates will be quick.

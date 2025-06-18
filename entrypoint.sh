@@ -6,8 +6,32 @@
 echo "🖤 WhatsApp Bot - Starting Up 🖤"
 echo "=============================="
 
+# Function to perform a clean installation
+clean_install() {
+    echo "Performing clean installation..."
+    rm -rf node_modules package-lock.json
+    npm cache clean --force
+    npm install --production --no-audit --no-fund
+    return $?
+}
+
+# Check if script is called from prestart
+if [ "$1" = "from_prestart" ]; then
+    echo "📋 Running setup from prestart script..."
+
 # Make sure we're in the correct directory
-cd /home/container || cd $(pwd)
+cd /home/container 2>/dev/null || cd $(pwd) || true
+
+# Set default directory paths for different environments
+if [ -d "/home/container" ]; then
+  # Pterodactyl environment
+  BASE_DIR="/home/container"
+else
+  # Local or other environment
+  BASE_DIR=$(pwd)
+fi
+
+cd "$BASE_DIR" || exit 1
 
 # Create basic directories
 mkdir -p data/sessions media/images media/audio
@@ -99,6 +123,12 @@ else
     mkdir -p data/sessions media/images media/audio
 fi
 
-# Start the bot using npm start
+# If this was called from prestart, exit here to prevent infinite loop
+if [ "$1" = "from_prestart" ]; then
+    echo "✅ Setup complete! Bot will start now..."
+    exit 0
+fi
+
+# Only reached when script is called directly (not from prestart)
 echo "🚀 Starting WhatsApp Bot..."
-npm start
+node index.js

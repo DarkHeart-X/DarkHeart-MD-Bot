@@ -4,6 +4,10 @@
 echo "🖤 DarkHeart WhatsApp Bot - Simple Setup 🖤"
 echo "=========================================="
 
+# Check if script is called from prestart
+if [ "$1" = "from_prestart" ]; then
+    echo "📋 Running setup from prestart script..."
+
 # Create directories if they don't exist
 mkdir -p data/sessions media/images media/audio
 
@@ -21,6 +25,12 @@ if [ -f "node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js" ]; the
     echo "✅ Fixed noise-handler issue!"
 fi
 
-# Start the bot
+# If this was called from prestart, exit here to prevent infinite loop
+if [ "$1" = "from_prestart" ]; then
+    echo "✅ Setup complete! Bot will start now..."
+    exit 0
+fi
+
+# Only reached when script is called directly (not from prestart)
 echo "🚀 Starting DarkHeart WhatsApp Bot..."
 node index.js
