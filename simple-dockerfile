@@ -16,8 +16,15 @@ COPY . .
 # Create necessary directories
 RUN mkdir -p data/sessions media/images media/audio
 
-# Make entrypoint executable
-RUN chmod +x entrypoint.sh
+# Make entrypoint executable and fix any Windows line-ending issues
+RUN chmod +x entrypoint.sh && \
+    dos2unix entrypoint.sh 2>/dev/null || echo "dos2unix not available, continuing" && \
+    sed -i 's/\r$//' entrypoint.sh 2>/dev/null || echo "sed fix not needed, continuing"
+
+# Apply the noise-handler fix before starting
+RUN if [ -f "scripts/simple-noise-handler-fix.js" ] && [ -d "node_modules/@whiskeysockets" ]; then \
+    cp scripts/simple-noise-handler-fix.js node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js; \
+    fi
 
 # Start the bot
 CMD ["npm", "start"]

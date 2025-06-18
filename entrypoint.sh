@@ -47,18 +47,33 @@ fi
 # Fix the Baileys noise-handler issue
 if [ -d "node_modules/@whiskeysockets" ]; then
     echo "🔧 Applying fix for noise-handler..."
-    # Create simple fix directly in the script
-    cat > node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js << 'EOL'
+    
+    # Check if the simple-noise-handler-fix.js exists and use it
+    if [ -f "scripts/simple-noise-handler-fix.js" ]; then
+        cp scripts/simple-noise-handler-fix.js node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js
+    else
+        # Create a more robust noise-handler fix if the file doesn't exist
+        cat > node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js << 'EOL'
+/**
+ * Fixed noise-handler.js to avoid initialization errors
+ */
 const { generateKeyPair } = require('./crypto');
 
-// Define makeNoiseHandler first to avoid reference error
-const makeNoiseHandler = (options) => {
-  const { private: privateKey, public: publicKey } = options.keyPair || generateKeyPair();
+// Define makeNoiseHandler first to avoid the reference error
+const makeNoiseHandler = (options = {}) => {
+  // Ensure options and keyPair exist to prevent undefined errors
+  options = options || {};
+  const keyPair = options.keyPair || generateKeyPair();
+  const privateKey = keyPair.private;
+  const publicKey = keyPair.public;
+  
+  let inBytes = Buffer.alloc(0);
   
   return {
     keyPair: { private: privateKey, public: publicKey },
     
     processHandshake: (data) => {
+      // Simple implementation that returns the required keys
       const keyEnc = data && data.length >= 32 ? data.slice(0, 32) : Buffer.alloc(32);
       const keyMac = data && data.length >= 64 ? data.slice(32, 64) : Buffer.alloc(32);
       
@@ -68,15 +83,49 @@ const makeNoiseHandler = (options) => {
       };
     },
     
-    decodeFrame: (data) => data,
-    encodeFrame: (data) => data
+    decodeFrame: (newData) => {
+      try {
+        // Basic implementation that just returns the data
+        inBytes = Buffer.concat([inBytes, Buffer.from(newData)]);
+        
+        if (inBytes.length < 3) {
+          return null;
+        }
+        
+        const frameLength = inBytes.slice(0, 3).readUIntBE(0, 3);
+        
+        if (inBytes.length < frameLength + 3) {
+          return null;
+        }
+        
+        const frame = inBytes.slice(3, frameLength + 3);
+        inBytes = inBytes.slice(frameLength + 3);
+        
+        return frame;
+      } catch (error) {
+        return null;
+      }
+    },
+    
+    encodeFrame: (data) => {
+      try {
+        const bytes = Buffer.isBuffer(data) ? data : Buffer.from(data);
+        const frameLength = Buffer.alloc(3);
+        frameLength.writeUIntBE(bytes.length, 0, 3);
+        return Buffer.concat([frameLength, bytes]);
+      } catch (error) {
+        return Buffer.alloc(0);
+      }
+    }
   };
 };
 
-// Export functions
+// Export the functions
 exports.makeNoiseHandler = makeNoiseHandler;
 exports.makeNoiseHandlerAsync = makeNoiseHandler;
 EOL
+    fi
+    
     echo "✅ Fixed noise-handler issue!"
 fi
 

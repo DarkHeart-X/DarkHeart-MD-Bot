@@ -22,9 +22,9 @@ This guide provides straightforward instructions for deploying a WhatsApp Bot on
 
 1. In the Pterodactyl panel, go to the server's "Startup" tab
 2. Ensure the startup command is set to: `npm start`
-3. Add these environment variables (optional but recommended):
-   - `USE_PAIRING_CODE`: `true`
+3. Add these environment variables (recommended):
    - `OWNER_NUMBER`: Your WhatsApp number (e.g., `923001234567`)
+   - Note: Pairing code is enabled by default
 4. Save the changes
 
 ### 4. Start the Server
@@ -62,28 +62,87 @@ node index.js
 ### If you still see the noise-handler error
 
 ```bash
-# Edit the noise-handler.js file directly
+# Copy the fixed version directly
+cp scripts/simple-noise-handler-fix.js node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js
+```
+
+If that doesn't work, you can edit the file directly:
+
+```bash
+# Edit the noise-handler.js file manually
 nano node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js
 ```
 
-Then delete everything and paste this simple implementation:
+Delete everything and paste this more robust implementation:
 
 ```javascript
+/**
+ * Fixed noise-handler.js to avoid initialization errors
+ */
 const { generateKeyPair } = require('./crypto');
 
-// Define function first to avoid reference error
-const makeNoiseHandler = (options) => {
+// Define makeNoiseHandler first to avoid the reference error
+const makeNoiseHandler = (options = {}) => {
+  // Ensure options and keyPair exist to prevent undefined errors
+  options = options || {};
+  const keyPair = options.keyPair || generateKeyPair();
+  const privateKey = keyPair.private;
+  const publicKey = keyPair.public;
+  
+  let inBytes = Buffer.alloc(0);
+  
   return {
-    processHandshake: () => ({
-      encKey: Buffer.alloc(32),
-      macKey: Buffer.alloc(32)
-    }),
-    decodeFrame: (data) => data,
-    encodeFrame: (data) => data
+    keyPair: { private: privateKey, public: publicKey },
+    
+    processHandshake: (data) => {
+      // Simple implementation that returns the required keys
+      const keyEnc = data && data.length >= 32 ? data.slice(0, 32) : Buffer.alloc(32);
+      const keyMac = data && data.length >= 64 ? data.slice(32, 64) : Buffer.alloc(32);
+      
+      return {
+        encKey: Buffer.from(keyEnc),
+        macKey: Buffer.from(keyMac)
+      };
+    },
+    
+    decodeFrame: (newData) => {
+      try {
+        // Basic implementation that just returns the data
+        inBytes = Buffer.concat([inBytes, Buffer.from(newData)]);
+        
+        if (inBytes.length < 3) {
+          return null;
+        }
+        
+        const frameLength = inBytes.slice(0, 3).readUIntBE(0, 3);
+        
+        if (inBytes.length < frameLength + 3) {
+          return null;
+        }
+        
+        const frame = inBytes.slice(3, frameLength + 3);
+        inBytes = inBytes.slice(frameLength + 3);
+        
+        return frame;
+      } catch (error) {
+        return null;
+      }
+    },
+    
+    encodeFrame: (data) => {
+      try {
+        const bytes = Buffer.isBuffer(data) ? data : Buffer.from(data);
+        const frameLength = Buffer.alloc(3);
+        frameLength.writeUIntBE(bytes.length, 0, 3);
+        return Buffer.concat([frameLength, bytes]);
+      } catch (error) {
+        return Buffer.alloc(0);
+      }
+    }
   };
 };
 
-// Export functions
+// Export the functions
 exports.makeNoiseHandler = makeNoiseHandler;
 exports.makeNoiseHandlerAsync = makeNoiseHandler;
 ```

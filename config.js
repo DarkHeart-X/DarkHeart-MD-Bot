@@ -13,9 +13,8 @@ const config = {
     OWNER_NUMBER: process.env.OWNER_NUMBER || '923xxxxxxxxx@s.whatsapp.net',
     BOT_NAME: process.env.BOT_NAME || 'DarkHeart',
     TIMEZONE: process.env.TIMEZONE || 'Asia/Karachi',
-    
-    // Authentication Configuration
-    USE_PAIRING_CODE: process.env.USE_PAIRING_CODE === 'true' || false,
+      // Authentication Configuration
+    USE_PAIRING_CODE: process.env.USE_PAIRING_CODE !== 'false', // Default to true unless explicitly set to false
     
     // API Keys
     WEATHER_API_KEY: process.env.WEATHER_API_KEY || '',

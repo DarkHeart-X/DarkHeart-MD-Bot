@@ -29,9 +29,9 @@ This detailed guide will help you deploy the WhatsApp Bot on Pterodactyl panel a
 
 1. Go to server "Startup" tab
 2. Ensure the startup command is set to: `npm start`
-3. Set these environment variables (optional):
-   - `USE_PAIRING_CODE`: `true` (recommended)
-   - `OWNER_NUMBER`: Your number in international format (e.g., `923001234567`)
+3. Set these environment variables:
+   - `OWNER_NUMBER`: Your number in international format (e.g., `923001234567`) (required for pairing code)
+   - Note: Pairing code authentication is now enabled by default
 4. Save the changes
 
 ### 4. Start the Server
@@ -91,13 +91,19 @@ If you see errors about missing modules:
 
 ### Baileys Noise-Handler Error
 
-If you see errors related to `noise-handler.js`:
+If you see errors related to `noise-handler.js` or see `Cannot read properties of undefined (reading 'child')` errors:
 
 1. In the Pterodactyl console, run:
    ```bash
+   cp scripts/simple-noise-handler-fix.js node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js
+   ```
+
+2. Or use the patch script if available:
+   ```bash
    bash scripts/patch-baileys.js
    ```
-2. Or apply the fix manually:
+   
+3. Or apply the fix manually:
    ```bash
    cp scripts/simple-noise-handler-fix.js node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js
    ```
@@ -138,8 +144,8 @@ You can set these environment variables for customization:
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `USE_PAIRING_CODE` | Enable pairing code auth | `true` |
-| `OWNER_NUMBER` | Your WhatsApp number | `923001234567` |
+| `OWNER_NUMBER` | Your WhatsApp number (required for pairing) | `923001234567` |
+| `USE_PAIRING_CODE` | Disable pairing code if set to false | `false` |
 | `BOT_NAME` | Custom bot name | `MyAwesomeBot` |
 | `PREFIX` | Command prefix | `!` |
 

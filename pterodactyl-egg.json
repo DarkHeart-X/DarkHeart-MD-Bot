@@ -59,11 +59,10 @@
             "user_editable": true,
             "rules": "required|string|max:3"
         },
-        {
-            "name": "Use Pairing Code",
-            "description": "Whether to use pairing code instead of QR code for authentication.",
+        {            "name": "Use Pairing Code",
+            "description": "Whether to use pairing code instead of QR code for authentication. Default is true.",
             "env_variable": "USE_PAIRING_CODE",
-            "default_value": "false",
+            "default_value": "true",
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|boolean"

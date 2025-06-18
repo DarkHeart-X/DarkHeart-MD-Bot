@@ -131,40 +131,53 @@ async function startDarkHeartBot() {
         
         if (qr) {
             console.log('🖤 DarkHeart Bot - Connection Options 🖤');
-            
-            // Check whether to use pairing code or QR code
+              // Pairing code is the default authentication method
             if (config.USE_PAIRING_CODE) {
-                console.log('🔒 Using Pairing Code Authentication...');
+                console.log('🔒 Using Pairing Code Authentication (default)');
                 
-                // For Pterodactyl, use environment variable if available
-                let phoneNumber = process.env.OWNER_NUMBER || '';
+                // Try to get the phone number from multiple sources
+                let phoneNumber = process.env.OWNER_NUMBER || config.OWNER_NUMBER || '';
                 
-                // If no number in environment, ask for it
-                if (!phoneNumber || phoneNumber.length < 8) {
-                    phoneNumber = await getPairingCode();
-                } else {
+                // Clean up the phone number format
+                if (phoneNumber) {
+                    // Remove any non-numeric characters and @s.whatsapp.net suffix
                     phoneNumber = phoneNumber.replace(/[^0-9]/g, '');
-                    console.log(`📱 Using phone number from environment: ${phoneNumber}`);
+                    
+                    // Make sure it's a valid length
+                    if (phoneNumber.length < 8 || phoneNumber.length > 15) {
+                        console.log(`⚠️ Warning: Phone number ${phoneNumber} seems invalid (wrong length)`);
+                        phoneNumber = '';
+                    } else {
+                        console.log(`📱 Using phone number: ${phoneNumber}`);
+                    }
                 }
                 
-                if (phoneNumber && phoneNumber.length > 8) {
+                // If no valid number found, ask for it
+                if (!phoneNumber) {
+                    console.log('⚠️ No valid phone number found in environment or config');
+                    phoneNumber = await getPairingCode();
+                }
+                
+                if (phoneNumber && phoneNumber.length >= 8) {
                     try {
                         const code = await sock.requestPairingCode(phoneNumber);
                         console.log(`\n🔐 Pairing Code: ${code}`);
+                        console.log('─────────────────────────────────────────────────');
                         console.log('📱 Enter this code in WhatsApp > Linked Devices > Link a Device > Link with Phone Number');
+                        console.log('─────────────────────────────────────────────────');
                     } catch (err) {
                         console.error('❌ Error requesting pairing code:', err);
                         console.log('📱 Falling back to QR code');
                         qrcode.generate(qr, { small: true });
                     }
                 } else {
-                    console.log('❌ Invalid phone number. Falling back to QR code');
+                    console.log('❌ No valid phone number provided. Falling back to QR code');
                     qrcode.generate(qr, { small: true });
                 }
             } else {
-                console.log('📷 Scan this QR Code:');
+                console.log('📷 Scan this QR Code (pairing code disabled):');
                 qrcode.generate(qr, { small: true });
-                console.log('\nOr set USE_PAIRING_CODE=true in environment to use pairing code instead');
+                console.log('\nPairing code is disabled. Enable it by setting USE_PAIRING_CODE=true');
             }
         }
         
