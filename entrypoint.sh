@@ -18,6 +18,7 @@ clean_install() {
 # Check if script is called from prestart
 if [ "$1" = "from_prestart" ]; then
     echo "📋 Running setup from prestart script..."
+fi
 
 # Make sure we're in the correct directory
 cd /home/container 2>/dev/null || cd $(pwd) || true
