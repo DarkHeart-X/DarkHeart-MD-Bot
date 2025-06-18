@@ -48,8 +48,15 @@ fi
 if [ -d "node_modules/@whiskeysockets" ]; then
     echo "🔧 Applying comprehensive Baileys fixes..."
     
+    # Try the direct WebSocket error fix first (most targeted solution)
+    if [ -f "scripts/fix-websocket-errors.js" ]; then
+        echo "🔄 Running direct WebSocket error fix with Node.js..."
+        node scripts/fix-websocket-errors.js
+    elif [ -f "scripts/fix-socket.sh" ]; then
+        echo "🔄 Running targeted socket.js fix..."
+        bash scripts/fix-socket.sh
     # Use the comprehensive fix script if available
-    if [ -f "scripts/fix-baileys.sh" ]; then
+    elif [ -f "scripts/fix-baileys.sh" ]; then
         echo "🔄 Running comprehensive fix-baileys.sh script..."
         bash scripts/fix-baileys.sh
     
@@ -61,9 +68,18 @@ if [ -d "node_modules/@whiskeysockets" ]; then
         # Also try to fix socket.js WebSocket errors
         if [ -f "node_modules/@whiskeysockets/baileys/lib/Socket/socket.js" ]; then
             echo "🔧 Attempting to patch socket.js for WebSocket errors..."
-            sed -i'.bak' 's/\({ statusCode: err.code, reason: err.reason }\)/\({ statusCode: err?.code || 0, reason: err?.reason || "Unknown" }\)/g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js 2>/dev/null || true
-            sed -i'.bak' 's/connection.info.statusCode/connection?.info?.statusCode || 500/g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js 2>/dev/null || true
-            sed -i'.bak' 's/connection.info.reason/connection?.info?.reason || "Connection ended"/g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js 2>/dev/null || true
+            cp node_modules/@whiskeysockets/baileys/lib/Socket/socket.js node_modules/@whiskeysockets/baileys/lib/Socket/socket.js.bak 2>/dev/null || true
+            
+            echo "🔧 Fixing 'Cannot read properties of undefined' errors in socket.js..."
+            # Fix 1: WebSocketClient.<anonymous> error at line 454
+            sed -i'.bak' 's/ws\.on(['"'"']close['"'"'], *({.*}) *=>/ws.on(\1, (event) => { const code = event?.code || 0; const reason = event?.reason || ""; /g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js 2>/dev/null || true
+            
+            # Fix 2: connection.info error at line 254
+            sed -i'.bak' 's/connection\.info\.statusCode/connection?.info?.statusCode || 500/g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js 2>/dev/null || true
+            sed -i'.bak' 's/connection\.info\.reason/connection?.info?.reason || "Connection ended"/g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js 2>/dev/null || true
+            
+            # Fix 3: err object error
+            sed -i'.bak' 's/({ statusCode: err.code, reason: err.reason })/({ statusCode: err?.code || 0, reason: err?.reason || "Unknown" })/g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js 2>/dev/null || true
         fi
     
     # Create fixes inline if no scripts are available

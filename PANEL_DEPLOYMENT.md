@@ -91,27 +91,52 @@ If you see errors about missing modules:
 
 ### Baileys Errors
 
-If you encounter any Baileys-related errors (`noise-handler.js` or WebSocket errors like `Cannot read properties of undefined`):
+If you encounter any Baileys-related errors:
+
+#### For WebSocket errors shown in your screenshot:
+
+```
+TypeError: Cannot read properties of undefined (reading 'error')
+TypeError: Cannot read properties of undefined (reading 'info')
+```
+
+1. Run the direct WebSocket fix (fastest solution):
+   ```bash
+   node scripts/fix-websocket-errors.js
+   ```
+
+2. If that doesn't work, try the targeted socket.js fix:
+   ```bash
+   bash scripts/fix-socket.sh
+   ```
+
+#### For all Baileys issues:
 
 1. Run the comprehensive fix script:
    ```bash
    bash scripts/fix-baileys.sh
    ```
 
-2. If that doesn't work, you can fix specific issues:
+#### For specific issues only:
 
-   For noise-handler errors:
+For noise-handler errors:
+```bash
+cp scripts/simple-noise-handler-fix.js node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js
+```
+
+#### Manual socket.js fix:
+
+If all automated approaches fail, you can manually edit the socket.js file:
+
+1. Open the file:
    ```bash
-   cp scripts/simple-noise-handler-fix.js node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js
+   nano node_modules/@whiskeysockets/baileys/lib/Socket/socket.js
    ```
 
-   For WebSocket errors:
-   ```bash
-   # Fix "Cannot read properties of undefined" errors in socket.js
-   sed -i 's/{ statusCode: err.code, reason: err.reason }/{ statusCode: err?.code || 0, reason: err?.reason || "Unknown" }/g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js
-   sed -i 's/connection.info.statusCode/connection?.info?.statusCode || 500/g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js
-   sed -i 's/connection.info.reason/connection?.info?.reason || "Connection ended"/g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js
-   ```
+2. Look for lines around 254 and 454 and apply these changes:
+   - Change `connection.info.statusCode` to `connection?.info?.statusCode || 500`
+   - Change `connection.info.reason` to `connection?.info?.reason || "Unknown"`
+   - Change `ws.on('close', ({ code, reason }) => {` to `ws.on('close', (event) => { const code = event?.code || 0; const reason = event?.reason || "";`
    
 3. Or apply the fixes manually:
    ```bash

@@ -61,6 +61,17 @@ node index.js
 
 ### If you see Baileys errors (noise-handler or WebSocket errors)
 
+If you see these specific errors:
+- `TypeError: Cannot read properties of undefined (reading 'error')` at socket.js:454:20
+- `TypeError: Cannot read properties of undefined (reading 'info')` at socket.js:254:16
+
+Run this direct fix:
+
+```bash
+# Quick fix for WebSocket errors (recommended)
+node scripts/fix-websocket-errors.js
+```
+
 For a complete fix of all common Baileys issues:
 
 ```bash
@@ -68,20 +79,14 @@ For a complete fix of all common Baileys issues:
 bash scripts/fix-baileys.sh
 ```
 
-If you specifically see noise-handler errors:
+If you still have issues, try these targeted fixes:
 
 ```bash
-# Copy the fixed version directly
+# For WebSocket errors shown in your screenshot
+bash scripts/fix-socket.sh
+
+# For noise-handler errors only
 cp scripts/simple-noise-handler-fix.js node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js
-```
-
-If you specifically see WebSocket errors (`Cannot read properties of undefined`):
-
-```bash
-# Apply the WebSocket fixes
-sed -i 's/{ statusCode: err.code, reason: err.reason }/{ statusCode: err?.code || 0, reason: err?.reason || "Unknown" }/g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js
-sed -i 's/connection.info.statusCode/connection?.info?.statusCode || 500/g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js
-sed -i 's/connection.info.reason/connection?.info?.reason || "Connection ended"/g' node_modules/@whiskeysockets/baileys/lib/Socket/socket.js
 ```
 
 If that doesn't work, you can edit the file directly:
