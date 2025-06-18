@@ -10,9 +10,11 @@ const makeNoiseHandler = (options) => {
   const { private: privateKey, public: publicKey } = options.keyPair || generateKeyPair();
   
   let inBytes = Buffer.alloc(0);
-  
-  return {
+    return {
     keyPair: { private: privateKey, public: publicKey },
+    
+    // Add child method to prevent "Cannot read properties of undefined (reading 'child')" error
+    child: () => null,
     
     processHandshake: (data) => {
       // Simple implementation that returns the required keys

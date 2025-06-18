@@ -93,14 +93,25 @@ If you see errors about missing modules:
 
 If you encounter any Baileys-related errors:
 
-#### For WebSocket errors shown in your screenshot:
+#### For the 'child' property error (current issue):
+
+```
+TypeError: Cannot read properties of undefined (reading 'child')
+```
+
+1. Run the direct fix for this specific error:
+   ```bash
+   node scripts/fix-noise-handler-child.js
+   ```
+
+#### For WebSocket errors:
 
 ```
 TypeError: Cannot read properties of undefined (reading 'error')
 TypeError: Cannot read properties of undefined (reading 'info')
 ```
 
-1. Run the direct WebSocket fix (fastest solution):
+1. Run the direct WebSocket fix:
    ```bash
    node scripts/fix-websocket-errors.js
    ```

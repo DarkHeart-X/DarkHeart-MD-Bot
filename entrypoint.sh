@@ -48,8 +48,12 @@ fi
 if [ -d "node_modules/@whiskeysockets" ]; then
     echo "🔧 Applying comprehensive Baileys fixes..."
     
-    # Try the direct WebSocket error fix first (most targeted solution)
-    if [ -f "scripts/fix-websocket-errors.js" ]; then
+    # Try the direct child property fix first (for the current error)
+    if [ -f "scripts/fix-noise-handler-child.js" ]; then
+        echo "🔄 Running fix for 'Cannot read properties of undefined (reading 'child')' error..."
+        node scripts/fix-noise-handler-child.js
+    # Try the direct WebSocket error fix (for previous errors)
+    elif [ -f "scripts/fix-websocket-errors.js" ]; then
         echo "🔄 Running direct WebSocket error fix with Node.js..."
         node scripts/fix-websocket-errors.js
     elif [ -f "scripts/fix-socket.sh" ]; then
@@ -62,7 +66,7 @@ if [ -d "node_modules/@whiskeysockets" ]; then
     
     # Fall back to the simple fix if the script doesn't exist
     elif [ -f "scripts/simple-noise-handler-fix.js" ]; then
-        echo "🔧 Applying simple noise-handler fix..."
+        echo "🔧 Applying simple noise-handler fix with child property..."
         cp scripts/simple-noise-handler-fix.js node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js
         
         # Also try to fix socket.js WebSocket errors

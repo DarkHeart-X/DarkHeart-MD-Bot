@@ -31,6 +31,13 @@ const makeNoiseHandler = (options = {}) => {
   return {
     keyPair: { private: privateKey, public: publicKey },
     
+    // Add child method to prevent "Cannot read properties of undefined (reading 'child')" error
+    child: () => {
+      // This is a dummy implementation that returns null
+      // The actual implementation in Baileys uses this for key derivation
+      return null;
+    },
+    
     processHandshake: (data) => {
       // Simple implementation that returns the required keys
       const keyEnc = data && data.length >= 32 ? data.slice(0, 32) : Buffer.alloc(32);

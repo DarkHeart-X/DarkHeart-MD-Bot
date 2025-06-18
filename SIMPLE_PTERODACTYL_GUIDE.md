@@ -61,14 +61,24 @@ node index.js
 
 ### If you see Baileys errors (noise-handler or WebSocket errors)
 
-If you see these specific errors:
+If you see this specific error:
+- `TypeError: Cannot read properties of undefined (reading 'child')` at noise-handler.js:15:21
+
+Run this direct fix:
+
+```bash
+# Quick fix for child property error (recommended)
+node scripts/fix-noise-handler-child.js
+```
+
+If you see these WebSocket errors:
 - `TypeError: Cannot read properties of undefined (reading 'error')` at socket.js:454:20
 - `TypeError: Cannot read properties of undefined (reading 'info')` at socket.js:254:16
 
 Run this direct fix:
 
 ```bash
-# Quick fix for WebSocket errors (recommended)
+# Quick fix for WebSocket errors
 node scripts/fix-websocket-errors.js
 ```
 

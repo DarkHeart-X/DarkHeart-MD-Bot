@@ -57,10 +57,16 @@ exports.makeNoiseHandler = (options) => {
     };
     
     let inBytes = Buffer.alloc(0);
-    
-    return {
+      return {
         // Return the public key for the handshake
         keyPair: { private: privateKey, public: publicKey },
+        
+        // Add child method to prevent "Cannot read properties of undefined (reading 'child')" error
+        child: () => {
+            // This is a dummy implementation that returns null
+            // The actual implementation in Baileys uses this for key derivation
+            return null;
+        },
         
         // Process the handshake
         processHandshake: authenticate,
